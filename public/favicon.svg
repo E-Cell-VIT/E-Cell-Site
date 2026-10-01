@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- [Placeholder: E-Cell VIT Mumbai Favicon Mark] -->
+  <defs>
+    <linearGradient id="fav-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="fav-grad-accent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+  </defs>
+
+  <rect width="100" height="100" rx="22" fill="#090D16" />
+  
+  <polygon points="50,14 84,33 84,67 50,86 16,67 16,33" 
+           stroke="url(#fav-grad-primary)" 
+           stroke-width="4" 
+           stroke-linejoin="round"
+           fill="#0F172A" />
+
+  <path d="M 34 35 L 66 35 C 68 35 69 36 69 38 C 69 40 68 41 66 41 L 42 41 L 42 47 L 62 47 C 64 47 65 48 65 50 C 65 52 64 53 62 53 L 42 53 L 42 59 L 66 59 C 68 59 69 60 69 62 C 69 64 68 65 66 65 L 34 65 C 32 65 31 64 31 62 L 31 38 C 31 36 32 35 34 35 Z" 
+        fill="url(#fav-grad-primary)" />
+
+  <path d="M 62 27 L 76 27 L 76 41 L 70 35 L 57 48 L 53 44 L 66 31 Z" 
+        fill="url(#fav-grad-accent)" />
+</svg>

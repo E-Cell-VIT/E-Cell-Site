@@ -1,0 +1,364 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model SiteSetting {
+  id                         String   @id @default("default")
+  logoUrl                    String?
+  siteName                   String   @default("E-Cell VIT Mumbai")
+  tagline                    String   @default("LEARN • BUILD • NETWORK • LEAD")
+  aboutText                  String
+  missionText                String
+  visionText                 String
+  contactEmail               String   @default("ecell@vit.edu.in")
+  contactPhone               String   @default("+91 22 2416 1126")
+  instagramUrl               String?
+  linkedinUrl                String?
+  youtubeUrl                 String?
+  twitterUrl                 String?
+  campusMapUrl               String   @default("https://maps.google.com/?q=Vidyalankar+Institute+of+Technology+Wadala+Mumbai")
+  heroTitle                  String   @default("Empowering Student Innovators & Founders")
+  heroSubtitle               String   @default("Vidyalankar Institute of Technology's premier entrepreneurship hub fostering startup excellence, innovation, and leadership.")
+  manualStats                String   @default("[]") // JSON string of [{ label: string, value: string }]
+  outdatedGrantThresholdDays Int      @default(90)
+  updatedAt                  DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model AdminUser {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  name                 String
+  passwordHash         String
+  role                 String    @default("editor") // "super_admin" | "editor"
+  active               Boolean   @default(true)
+  mustChangePassword   Boolean   @default(false)
+  failedLoginAttempts  Int       @default(0)
+  lockedUntil          DateTime?
+  lastLoginAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("admin_users")
+}
+
+model Category {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  type         String   // "startup_domain" | "event_category" | "grant_sector"
+  isArchived   Boolean  @default(false)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([type, isArchived])
+  @@map("categories")
+}
+
+model Startup {
+  id                 String          @id @default(cuid())
+  name               String
+  slug               String          @unique
+  domain             String
+  oneLineSummary     String
+  fullDescription    String
+  logoUrl            String?
+  websiteUrl         String?
+  linkedinUrl        String?
+  twitterUrl         String?
+  startupStatus      String          @default("Currently Working") // "Currently Working" | "Alumni / Scaled" | "Idea Stage"
+  publicationStatus  String          @default("Draft")             // "Draft" | "Published" | "Archived"
+  isFeatured         Boolean         @default(false)
+  displayOrder       Int             @default(0)
+  founderPublicInfo  String          // Public: Name and Dept/Batch only
+  msmeStatus         String          @default("Unknown")          // "Unknown" | "Not Registered" | "Registration Pending" | "Registered" | "Not Applicable"
+  msmeNumber         String?
+  showMsmeNumber     Boolean         @default(false)
+  dpiitStatus        String          @default("Unknown")          // "Unknown" | "Not Registered" | "Registration Pending" | "Registered" | "Not Applicable"
+  dpiitNumber        String?
+  showDpiitNumber    Boolean         @default(false)
+  isEcellVerified    Boolean         @default(false)
+  isMsmeVerified     Boolean         @default(false)
+  isDpiitVerified    Boolean         @default(false)
+  verifiedBy         String?
+  verifiedAt         DateTime?
+  verificationNote   String?         // PRIVATE: Visible only to authenticated admins
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  privateDetails     StartupPrivate?
+
+  @@index([publicationStatus, startupStatus])
+  @@index([isFeatured])
+  @@map("startups")
+}
+
+model StartupPrivate {
+  id               String   @id @default(cuid())
+  startupId        String   @unique
+  startup          Startup  @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  founderEmails    String   // Private: Never exposed in public queries
+  founderPhones    String   // Private: Never exposed in public queries
+  pitchDeckPath    String?  // Stored in private storage
+  pitchDeckFilename String?
+  applicationNotes String?
+  internalNotes    String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("startup_private")
+}
+
+model IncubationApplication {
+  id                 String                @id @default(cuid())
+  startupName        String
+  founderNames       String
+  founderEmail       String
+  founderPhone       String
+  departmentBatch    String
+  domain             String
+  oneLineSummary     String
+  stage              String
+  pitchDeckPath      String?               // Stored in ./storage/private/
+  pitchDeckFilename  String?
+  consentGiven       Boolean               @default(true)
+  consentVersion     String                @default("v1.0")
+  consentTimestamp   DateTime              @default(now())
+  status             String                @default("Pending") // "Pending" | "Shortlisted" | "Accepted" | "Rejected"
+  internalNotes      String?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  accessLogs         PitchDeckAccessLog[]
+
+  @@index([status])
+  @@map("incubation_applications")
+}
+
+model PitchDeckAccessLog {
+  id            String                @id @default(cuid())
+  applicationId String
+  application   IncubationApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  adminUserId   String
+  adminEmail    String
+  ipAddress     String?
+  userAgent     String?
+  timestamp     DateTime              @default(now())
+
+  @@index([applicationId])
+  @@map("pitch_deck_access_logs")
+}
+
+model Event {
+  id                String        @id @default(cuid())
+  title             String
+  slug              String        @unique
+  coverImageUrl     String?
+  eventDate         DateTime
+  venue             String
+  category          String
+  eventStatus       String        @default("Upcoming") // "Upcoming" | "Past"
+  publicationStatus String        @default("Draft")    // "Draft" | "Published" | "Archived"
+  isFeatured        Boolean       @default(false)
+  displayOrder      Int           @default(0)
+  description       String
+  reportPdfUrl      String?       // In ./storage/public/reports/
+  registrationUrl   String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  photos            EventPhoto[]
+  winners           EventWinner[]
+
+  @@index([publicationStatus, eventStatus])
+  @@index([isFeatured])
+  @@map("events")
+}
+
+model EventPhoto {
+  id           String   @id @default(cuid())
+  eventId      String
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  photoUrl     String
+  caption      String?
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([eventId, displayOrder])
+  @@map("event_photos")
+}
+
+model EventWinner {
+  id           String   @id @default(cuid())
+  eventId      String
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  rank         Int
+  teamName     String
+  projectTitle String
+  prize        String
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([eventId, rank])
+  @@map("event_winners")
+}
+
+model Blog {
+  id                String    @id @default(cuid())
+  title             String
+  slug              String    @unique
+  coverImageUrl     String?
+  excerpt           String
+  content           String
+  authorName        String
+  authorRole        String?
+  authorBio         String?
+  tags              String    // Comma-separated or tag list
+  readTimeMinutes   Int       @default(3)
+  publicationStatus String    @default("Draft") // "Draft" | "Published" | "Archived"
+  isFeatured        Boolean   @default(false)
+  publishedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([publicationStatus, publishedAt])
+  @@index([isFeatured])
+  @@map("blogs")
+}
+
+model Grant {
+  id                 String               @id @default(cuid())
+  schemeName         String
+  slug               String               @unique
+  agency             String
+  sector             String
+  stage              String
+  fundingRange       String
+  eligibility        String
+  applicationWindow  String
+  officialSourceUrl  String
+  sourceTitle        String
+  deadlineType       String               @default("fixed_date") // "fixed_date" | "fixed_datetime" | "rolling" | "until_funds_last" | "not_specified"
+  deadlineAt         DateTime?
+  lastVerifiedAt     DateTime             @default(now())
+  verifiedBy         String
+  publicationStatus  String               @default("Draft") // "Draft" | "Published" | "Archived"
+  displayOrder       Int                  @default(0)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  checklistItems     GrantChecklistItem[]
+
+  @@index([publicationStatus, deadlineType])
+  @@map("grants")
+}
+
+model GrantChecklistItem {
+  id           String   @id @default(cuid())
+  grantId      String?
+  grant        Grant?   @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  itemText     String
+  category     String   @default("General")
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([grantId, isActive])
+  @@map("grant_checklist_items")
+}
+
+model TeamMember {
+  id                String   @id @default(cuid())
+  name              String
+  photoUrl          String?
+  designation       String
+  organisation      String?
+  linkedinUrl       String?
+  category          String   // "Faculty Advisor" | "Industry Mentor" | "Student Head" | "Core Team"
+  academicYear      String   @default("2026-27")
+  isCurrent         Boolean  @default(true)
+  publicationStatus String   @default("Published") // "Draft" | "Published" | "Archived"
+  displayOrder      Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([publicationStatus, category, isCurrent])
+  @@index([academicYear])
+  @@map("team_members")
+}
+
+model Lead {
+  id               String   @id @default(cuid())
+  fullName         String
+  email            String
+  phone            String?
+  role             String   // "Student" | "Mentor" | "Investor" | "Sponsor" | "Alumni" | "Other"
+  areaOfInterest   String
+  message          String
+  source           String   @default("connect_modal") // "connect_modal" | "contact_form"
+  status           String   @default("Active")        // "Active" | "Contacted" | "Closed" | "Archived"
+  isRead           Boolean  @default(false)
+  consentGiven     Boolean  @default(true)
+  consentVersion   String   @default("v1.0")
+  consentTimestamp DateTime @default(now())
+  internalNotes    String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status, isRead])
+  @@map("leads")
+}
+
+model PrivacyRequest {
+  id            String    @id @default(cuid())
+  fullName      String
+  email         String
+  requestType   String    // "Delete" | "Correct" | "Withdraw Consent" | "Other"
+  details       String
+  status        String    @default("New") // "New" | "In Progress" | "Completed"
+  completedAt   DateTime?
+  internalNotes String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
+  @@map("privacy_requests")
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  adminUserId   String?
+  adminEmail    String?
+  action        String   // "create" | "update" | "archive" | "restore" | "delete" | "publish" | "status_change"
+  contentType   String
+  recordId      String
+  changedFields String?  // JSON string array of field names
+  oldValues     String?  // JSON string (sensitive fields redacted)
+  newValues     String?  // JSON string (sensitive fields redacted)
+  ipAddress     String?
+  userAgent     String?
+  timestamp     DateTime @default(now())
+
+  @@index([contentType, recordId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model RateLimit {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  count     Int      @default(1)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@map("rate_limits")
+}

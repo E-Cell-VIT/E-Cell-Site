@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" fill="none" role="img" aria-label="E-Cell VIT Mumbai Logo">
+  <!-- [Placeholder: E-Cell VIT Mumbai Official Logo - Replace this file or upload via Admin -> Site Settings] -->
+  <defs>
+    <linearGradient id="ecell-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="ecell-grad-accent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+    <filter id="ecell-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Hexagonal Brand Mark -->
+  <g transform="translate(10, 10)">
+    <!-- Outer hexagon glow path -->
+    <polygon points="40,2 76,22 76,62 40,82 4,62 4,22" 
+             fill="url(#ecell-grad-primary)" 
+             opacity="0.15" />
+    
+    <!-- Outer hexagon border -->
+    <polygon points="40,4 74,23 74,61 40,80 6,61 6,23" 
+             stroke="url(#ecell-grad-primary)" 
+             stroke-width="3" 
+             stroke-linejoin="round"
+             fill="#090D16" />
+
+    <!-- Stylized Modern 'E' & Dynamic Spark -->
+    <path d="M 24 26 L 56 26 C 58 26 59 27 59 29 C 59 31 58 32 56 32 L 32 32 L 32 38 L 52 38 C 54 38 55 39 55 41 C 55 43 54 44 52 44 L 32 44 L 32 50 L 56 50 C 58 50 59 51 59 53 C 59 55 58 56 56 56 L 24 56 C 22 56 21 55 21 53 L 21 29 C 21 27 22 26 24 26 Z" 
+          fill="url(#ecell-grad-primary)" />
+
+    <!-- Growth & Innovation Arrow Spark -->
+    <path d="M 52 20 L 66 20 L 66 34 L 60 28 L 47 41 L 43 37 L 56 24 Z" 
+          fill="url(#ecell-grad-accent)" 
+          filter="url(#ecell-glow)" />
+    
+    <!-- Mini accent dot -->
+    <circle cx="66" cy="62" r="3" fill="#06B6D4" />
+  </g>
+
+  <!-- Typography: E-CELL VIT MUMBAI -->
+  <g transform="translate(105, 0)">
+    <!-- Top Brand Text: E-CELL -->
+    <text x="0" y="44" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="34" 
+          font-weight="900" 
+          letter-spacing="1.5" 
+          fill="#FFFFFF">
+      E-CELL
+    </text>
+    
+    <!-- Sub-brand highlight: VIT -->
+    <text x="135" y="44" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="34" 
+          font-weight="900" 
+          letter-spacing="2" 
+          fill="url(#ecell-grad-primary)">
+      VIT
+    </text>
+
+    <!-- Location & Subtitle: MUMBAI -->
+    <text x="210" y="44" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="16" 
+          font-weight="700" 
+          letter-spacing="3" 
+          fill="#94A3B8">
+      MUMBAI
+    </text>
+
+    <!-- Institution Line -->
+    <text x="2" y="66" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="11" 
+          font-weight="600" 
+          letter-spacing="1.2" 
+          fill="#64748B">
+      VIDYALANKAR INSTITUTE OF TECHNOLOGY
+    </text>
+
+    <!-- Tagline (Exact): LEARN • BUILD • NETWORK • LEAD -->
+    <text x="2" y="82" 
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="9" 
+          font-weight="700" 
+          letter-spacing="2.2" 
+          fill="url(#ecell-grad-accent)">
+      LEARN • BUILD • NETWORK • LEAD
+    </text>
+  </g>
+</svg>
