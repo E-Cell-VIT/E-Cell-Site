@@ -6,7 +6,7 @@ Official Tagline: **LEARN • BUILD • NETWORK • LEAD**
 
 ---
 
-## 🚀 Quick-Start Guide (Runs 100% Locally)
+## Quick-Start Guide (Runs 100% Locally)
 
 This application runs completely on your local computer at `http://localhost:3000`. It requires **zero cloud accounts, zero API keys, no Supabase, no Vercel, no Firebase, and no external services**. All data is safely persisted in a local SQLite database (`./data/ecell.db`).
 
@@ -40,7 +40,7 @@ Visit in your browser:
 
 ---
 
-## 🛡️ Automated Verification Suite
+##  Automated Verification Suite
 
 Run the automated verification suite to test security, privacy isolation, RBAC rules, magic byte validation, and rate limiting:
 ```bash
@@ -81,7 +81,7 @@ The admin dashboard enforces strict server-side Role-Based Access Control (RBAC)
 
 ---
 
-## 📚 Complete Command Reference
+##  Complete Command Reference
 
 | Command | Description |
 | :--- | :--- |
