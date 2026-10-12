@@ -45,6 +45,7 @@ next-env.d.ts
 
 # local admin data (dev fallback for Vercel Blob)
 /.data
+data/
 
 # local logs
 dev.log
