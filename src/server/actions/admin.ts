@@ -5,6 +5,7 @@ import { requireFaculty } from "@/server/auth";
 import { db } from "@/server/supabase/admin";
 import { sessionClient } from "@/server/supabase/server";
 import {
+  deleteBlogSubmission as deleteSubmissionRow,
   deleteInboxItem,
   getBlogSubmission,
   getInboxItem,
@@ -367,5 +368,15 @@ export async function rejectBlogSubmission(id: string, reason: string): Promise<
     return { ok: true };
   } catch (e) {
     return fail(e, "Could not reject that blog submission.");
+  }
+}
+
+export async function deleteBlogSubmission(id: string): Promise<Result> {
+  try {
+    await requireFaculty();
+    await deleteSubmissionRow(id);
+    return { ok: true };
+  } catch (e) {
+    return fail(e, "Could not delete that blog submission.");
   }
 }

@@ -258,3 +258,20 @@ test("approved blog submissions publish once and keep the reviewer private", asy
   assert.equal(result.rows[0].count, 1);
   assert.equal(Number(result.rows[0].revision), 1);
 });
+
+test("approved blog submissions with cover image publish with cover", async () => {
+  const database = await databasePromise;
+  await database.exec(`
+    insert into public.blog_submissions (id, title, summary, body, author, author_email, cover)
+    values ('blog-with-cover', 'Story with image', 'A summary', 'A long enough body for the blog post.', 'Student Two', 'student2@example.edu', '/media/cover.jpg');
+  `);
+  const publish = await database.query<{ slug: string }>(
+    "select public.approve_blog_submission($1, $2, $3, $4, $5) as slug",
+    ["blog-with-cover", "post-with-cover", "story-with-image", "2026-10-26", "Faculty Reviewer"],
+  );
+  assert.equal(publish.rows[0].slug, "story-with-image");
+  const post = await database.query<{ cover: string }>(
+    "select cover from public.blog_posts where slug = 'story-with-image'",
+  );
+  assert.equal(post.rows[0].cover, "/media/cover.jpg");
+});

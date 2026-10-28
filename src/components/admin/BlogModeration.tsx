@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown, ChevronUp, Clock, Mail, X } from "lucide-react";
-import { approveBlogSubmission, rejectBlogSubmission } from "@/server/actions/admin";
+import { Check, ChevronDown, ChevronUp, Clock, Mail, Trash2, X } from "lucide-react";
+import { approveBlogSubmission, deleteBlogSubmission, rejectBlogSubmission } from "@/server/actions/admin";
 import type { BlogSubmission } from "@/types/content";
 import { Badge, Btn, Card, Empty, inputCls, useConfirm, useToast } from "./ui";
 
@@ -61,6 +61,28 @@ export function BlogModeration({ submissions }: { submissions: BlogSubmission[] 
     router.refresh();
   }
 
+  async function remove(s: BlogSubmission) {
+    if (
+      !(await confirm({
+        title: "Delete this submission?",
+        body: `“${s.title}” will be permanently removed. This cannot be undone.`,
+        confirm: "Delete submission",
+        danger: true,
+      }))
+    )
+      return;
+    setBusy(`d-${s.id}`);
+    const r = await deleteBlogSubmission(s.id);
+    setBusy(null);
+    if (!r.ok) {
+      toast({ tone: "error", text: r.error });
+      return;
+    }
+    toast({ tone: "success", text: "Submission deleted." });
+    if (open === s.id) setOpen(null);
+    router.refresh();
+  }
+
   return (
     <div className="mt-10">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
@@ -96,6 +118,14 @@ export function BlogModeration({ submissions }: { submissions: BlogSubmission[] 
                   aria-expanded={expanded}
                   className="flex w-full items-start gap-4 p-5 text-left"
                 >
+                  {s.cover && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={s.cover}
+                      alt=""
+                      className="h-16 w-16 shrink-0 rounded-xl object-cover ring-1 ring-black/10"
+                    />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="font-grotesk text-lg font-bold text-[#1d1d1b]">{s.title}</p>
                     <p className="mt-1 line-clamp-2 text-sm text-[#1d1d1b]/60">
@@ -117,6 +147,17 @@ export function BlogModeration({ submissions }: { submissions: BlogSubmission[] 
                 </button>
                 {expanded && (
                   <div className="border-t border-black/10 bg-[#faf8f2] p-5">
+                    {s.cover && (
+                      <div className="mb-4">
+                        <p className="mb-1.5 text-xs font-semibold text-black/50">Cover image</p>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={s.cover}
+                          alt=""
+                          className="aspect-[16/9] max-w-md rounded-xl object-cover ring-1 ring-black/10"
+                        />
+                      </div>
+                    )}
                     <p className="mb-4 whitespace-pre-wrap text-[15px] leading-7 text-[#1d1d1b]/80">
                       {s.body}
                     </p>
@@ -147,6 +188,15 @@ export function BlogModeration({ submissions }: { submissions: BlogSubmission[] 
                       >
                         Reject
                       </Btn>
+                      <Btn
+                        variant="ghost"
+                        icon={<Trash2 className="h-4 w-4 text-red-600" />}
+                        className="text-red-600 hover:bg-red-50"
+                        busy={busy === `d-${s.id}`}
+                        onClick={() => remove(s)}
+                      >
+                        Delete
+                      </Btn>
                     </div>
                   </div>
                 )}
@@ -163,15 +213,37 @@ export function BlogModeration({ submissions }: { submissions: BlogSubmission[] 
           </summary>
           <ul className="mt-4 divide-y divide-black/10">
             {decided.map((s) => (
-              <li key={s.id} className="flex flex-wrap items-start justify-between gap-3 py-3">
-                <div className="min-w-0">
-                  <p className="font-semibold text-[#1d1d1b]">{s.title}</p>
-                  <p className="mt-0.5 text-sm text-black/50">
-                    {s.author} · {when(s.createdAt)}
-                    {s.rejectionReason ? ` · Note: ${s.rejectionReason}` : ""}
-                  </p>
+              <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  {s.cover && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={s.cover}
+                      alt=""
+                      className="h-10 w-10 shrink-0 rounded-lg object-cover ring-1 ring-black/10"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <p className="font-semibold text-[#1d1d1b]">{s.title}</p>
+                    <p className="mt-0.5 text-sm text-black/50">
+                      {s.author} · {when(s.createdAt)}
+                      {s.rejectionReason ? ` · Note: ${s.rejectionReason}` : ""}
+                    </p>
+                  </div>
                 </div>
-                <Badge tone={s.status === "approved" ? "green" : "red"}>{s.status}</Badge>
+                <div className="flex items-center gap-2">
+                  <Badge tone={s.status === "approved" ? "green" : "red"}>{s.status}</Badge>
+                  <Btn
+                    variant="danger"
+                    className="!min-h-8 !px-2.5"
+                    aria-label={`Delete ${s.title}`}
+                    title="Delete submission"
+                    busy={busy === `d-${s.id}`}
+                    onClick={() => remove(s)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Btn>
+                </div>
               </li>
             ))}
           </ul>

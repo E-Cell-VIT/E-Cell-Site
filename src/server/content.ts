@@ -481,6 +481,7 @@ const blogSubmissionFrom = (r: Row): BlogSubmission => ({
   body: r.body as string,
   author: r.author as string,
   authorEmail: r.author_email as string,
+  cover: nul(r.cover as string),
   status: r.status as BlogSubmission["status"],
   rejectionReason: nul(r.rejection_reason as string),
   postSlug: nul(r.post_slug as string),
@@ -520,4 +521,9 @@ export async function rejectBlogSubmission(id: string, reason: string, reviewer:
     .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) throw new Error("That submission is no longer pending review.");
+}
+
+export async function deleteBlogSubmission(id: string) {
+  const { error } = await db().from("blog_submissions").delete().eq("id", id);
+  if (error) throw new Error(error.message);
 }

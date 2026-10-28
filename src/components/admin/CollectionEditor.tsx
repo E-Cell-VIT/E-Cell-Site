@@ -298,6 +298,20 @@ export function CollectionEditor<T extends Item>({
         title={draft?.index === null ? `Add a new ${noun}` : `Edit ${noun}`}
         footer={
           <>
+            {draft?.index !== null && (
+              <Btn
+                variant="danger"
+                className="mr-auto"
+                icon={<Trash2 className="h-4 w-4" />}
+                onClick={() => {
+                  const idx = draft!.index!;
+                  setDraft(null);
+                  remove(idx);
+                }}
+              >
+                Delete {noun}
+              </Btn>
+            )}
             <Btn onClick={close}>Cancel</Btn>
             <Btn variant="primary" busy={busy || uploading > 0} onClick={submit}>
               {uploading > 0 ? "Waiting for photo…" : draft?.index === null ? `Add ${noun}` : "Save changes"}

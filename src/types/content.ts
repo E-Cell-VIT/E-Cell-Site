@@ -199,6 +199,7 @@ export type BlogSubmission = {
   body: string;
   author: string;
   authorEmail: string;
+  cover?: string;
   status: "pending" | "approved" | "rejected";
   rejectionReason?: string;
   postSlug?: string;

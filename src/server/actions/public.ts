@@ -3,6 +3,7 @@ import { createHmac } from "node:crypto";
 import { isIP } from "node:net";
 import { headers } from "next/headers";
 import { saveInboxItem } from "@/server/content";
+import { photoStorageConfigurationError, writeBinary } from "@/server/media-store";
 import { db } from "@/server/supabase/admin";
 import { isPreviewMode } from "@/server/preview";
 import { makeUid } from "@/lib/utils";
@@ -177,6 +178,38 @@ async function submitBlogImpl(form: FormData): Promise<FormResult> {
       error: "This blog is already waiting for review. We'll publish it if it's approved.",
     };
 
+  let cover: string | null = null;
+  const imageEntry = form.get("image") ?? form.get("cover");
+  if (imageEntry instanceof File && imageEntry.size > 0) {
+    const TYPES: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+    };
+    const ext = TYPES[imageEntry.type];
+    if (!ext) {
+      return { ok: false, error: "Please use a JPG, PNG or WebP photo for the cover." };
+    }
+    if (imageEntry.size > 4 * 1024 * 1024) {
+      return { ok: false, error: "The cover photo is too large (max 4 MB)." };
+    }
+    const storageError = photoStorageConfigurationError();
+    if (storageError) {
+      return { ok: false, error: storageError };
+    }
+    const name = `${makeUid("img")}.${ext}`;
+    try {
+      await writeBinary(`media/${name}`, await imageEntry.arrayBuffer(), imageEntry.type);
+      cover = `/media/${name}`;
+    } catch (e) {
+      console.error("public blog photo upload failed", e);
+      return { ok: false, error: "Could not save the cover image. Please try again." };
+    }
+  } else if (typeof imageEntry === "string" && imageEntry.trim()) {
+    const s = imageEntry.trim().slice(0, 300);
+    if (s.startsWith("/media/")) cover = s;
+  }
+
   const { error } = await client.from("blog_submissions").insert({
     id: makeUid("bs"),
     created_at: now(),
@@ -185,6 +218,7 @@ async function submitBlogImpl(form: FormData): Promise<FormResult> {
     body,
     author,
     author_email: authorEmail,
+    cover,
     status: "pending",
   });
   if (error) throw new Error(`Could not save the blog submission: ${error.message}`);

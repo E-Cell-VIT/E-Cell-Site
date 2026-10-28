@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { submitBlog } from "@/server/actions/public";
 
@@ -12,6 +12,41 @@ export function SubmitBlogForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (preview) {
+      URL.revokeObjectURL(preview);
+      setPreview(null);
+    }
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setError("Please choose a JPG, PNG or WebP image.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setError("Please choose an image under 4 MB.");
+      e.target.value = "";
+      return;
+    }
+    setError("");
+    setPreview(URL.createObjectURL(file));
+  }
+
+  function clearImage() {
+    if (preview) URL.revokeObjectURL(preview);
+    setPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,8 +54,12 @@ export function SubmitBlogForm() {
     setError("");
     try {
       const r = await submitBlog(new FormData(e.currentTarget));
-      if (r.ok) setSent(true);
-      else setError(r.error);
+      if (r.ok) {
+        setSent(true);
+        clearImage();
+      } else {
+        setError(r.error);
+      }
     } catch {
       setError("We couldn't send your submission. Check your connection and try again.");
     } finally {
@@ -41,7 +80,14 @@ export function SubmitBlogForm() {
           <Button href="/blog" variant="ghost">
             Back to the blog
           </Button>
-          <Button onClick={() => setSent(false)}>Submit another</Button>
+          <Button
+            onClick={() => {
+              setSent(false);
+              clearImage();
+            }}
+          >
+            Submit another
+          </Button>
         </div>
       </div>
     );
@@ -90,6 +136,57 @@ export function SubmitBlogForm() {
           className={`${field} mt-2`}
         />
       </label>
+      <div>
+        <label className="block text-sm font-semibold text-fg">
+          Cover image (optional)
+          <span className="mt-1 block font-normal text-xs text-subtle">
+            JPG, PNG or WebP up to 4 MB. Shown at the top of the post and on the blog feed.
+          </span>
+        </label>
+        <input
+          ref={fileInputRef}
+          type="file"
+          name="image"
+          accept="image/jpeg,image/png,image/webp"
+          className="sr-only"
+          onChange={onFileChange}
+        />
+        {preview ? (
+          <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={preview}
+              alt="Cover preview"
+              className="aspect-[16/9] w-full max-w-xs border border-line bg-surface object-cover"
+            />
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex cursor-pointer items-center gap-1.5 border border-line bg-surface px-3 py-2 text-xs font-semibold text-fg transition hover:border-gold"
+              >
+                Change photo
+              </button>
+              <button
+                type="button"
+                onClick={clearImage}
+                className="inline-flex cursor-pointer items-center gap-1.5 border border-line bg-surface px-3 py-2 text-xs font-semibold text-[#f0a3a3] transition hover:border-red-500/50"
+              >
+                <X className="h-3.5 w-3.5" /> Remove photo
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 border border-dashed border-line bg-surface/50 p-6 text-sm text-subtle transition hover:border-gold hover:text-fg"
+          >
+            <ImagePlus className="h-5 w-5 text-gold" />
+            <span>Upload a cover photo</span>
+          </button>
+        )}
+      </div>
       <label className="block text-sm font-semibold text-fg">
         Blog post
         <textarea
