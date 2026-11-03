@@ -18,7 +18,8 @@ export function slugify(s: string) {
       .trim()
       .replace(/[\s_]+/g, "-")
       .replace(/-+/g, "-")
-      .slice(0, 60) || "startup"
+      .slice(0, 60)
+      .replace(/^-+|-+$/g, "") || "startup"
   );
 }
 
