@@ -40,10 +40,16 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const cv = data.get("cv");
+    if (cv instanceof File && cv.size > 3 * 1024 * 1024) {
+      setError("Your CV is too large (max 3 MB).");
+      return;
+    }
     setBusy(true);
     setError("");
     try {
-      const r = await applyToListing(new FormData(e.currentTarget));
+      const r = await applyToListing(data);
       if (r.ok) setSent(true);
       else setError(r.error);
     } catch {
@@ -146,7 +152,7 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
               role="dialog"
               aria-modal="true"
               aria-labelledby="apply-title"
-              className="w-full max-w-md border border-line-strong bg-elev p-6"
+              className="max-h-[90vh] w-full max-w-md overflow-y-auto border border-line-strong bg-elev p-6"
             >
               <div className="flex items-center justify-between">
                 <h2 id="apply-title" className="font-display text-3xl">
@@ -174,6 +180,30 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
                     placeholder="Short pitch: what can you bring?"
                     className={field}
                   />
+                  <p className="pt-1 text-xs tracking-wide text-muted uppercase">Optional</p>
+                  <input name="phone" type="tel" placeholder="Phone number" className={field} />
+                  <input
+                    name="profileUrl"
+                    type="url"
+                    placeholder="LinkedIn or portfolio link"
+                    className={field}
+                  />
+                  <textarea
+                    name="experience"
+                    rows={3}
+                    maxLength={1500}
+                    placeholder="Work experience or past projects"
+                    className={field}
+                  />
+                  <label className="block text-sm text-muted">
+                    CV / résumé (PDF, max 3 MB)
+                    <input
+                      name="cv"
+                      type="file"
+                      accept="application/pdf,.pdf"
+                      className={`${field} mt-1 file:mr-3 file:border-0 file:bg-transparent file:text-gold`}
+                    />
+                  </label>
                   {error && (
                     <p className="text-sm text-[#f0a3a3]" role="alert">
                       {error}

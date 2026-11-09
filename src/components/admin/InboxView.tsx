@@ -256,6 +256,32 @@ function Details({ item }: { item: InboxItem }) {
             {item.role} at {item.startup}
           </Row>
           <Row label="Their pitch">{item.pitch}</Row>
+          {item.phone && <Row label="Phone">{item.phone}</Row>}
+          {item.profileUrl && (
+            <Row label="Profile link">
+              <a
+                href={item.profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-[#1c4a35] underline underline-offset-2"
+              >
+                {item.profileUrl}
+              </a>
+            </Row>
+          )}
+          {item.experience && <Row label="Experience">{item.experience}</Row>}
+          {item.cv && (
+            <Row label="CV">
+              <a
+                href={`/admin/${item.cv}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-[#1c4a35] underline underline-offset-2"
+              >
+                Open CV (PDF)
+              </a>
+            </Row>
+          )}
         </>
       )}
       <Row label="Received">{sent}</Row>

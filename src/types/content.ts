@@ -185,6 +185,12 @@ export type Application = {
   name: string;
   email: string;
   pitch: string;
+  /** Optional extras the applicant can add. */
+  phone?: string;
+  profileUrl?: string;
+  experience?: string;
+  /** Path of the uploaded CV in private storage (e.g. "cv/abc.pdf"); served to faculty only. */
+  cv?: string;
   status: "New" | "Contacted" | "Closed";
 };
 export type InboxItem = Message | Idea | Application;

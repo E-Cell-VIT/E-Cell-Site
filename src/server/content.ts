@@ -391,6 +391,10 @@ const fromRow = (kind: InboxKind, r: Row) => {
     name: r.name,
     email: r.email,
     pitch: r.pitch,
+    phone: nul(r.phone),
+    profileUrl: nul(r.profile_url),
+    experience: nul(r.experience),
+    cv: nul(r.cv),
     status: r.status,
   };
 };
@@ -401,6 +405,7 @@ const toRow = (item: InboxItem): Row => {
   const row: Row = { id, created_at: createdAt };
   for (const [k, v] of Object.entries(rest)) {
     if (k === "listingUid") row.listing_uid = v || null;
+    else if (k === "profileUrl") row.profile_url = v || null;
     else if (k === "startupSlug") row.startup_slug = v ?? null;
     else if (k === "reviewedBy") row.reviewed_by = v ?? null;
     else if (k === "reviewedAt") row.reviewed_at = v ?? null;

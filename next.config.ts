@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     agentUpgrade: "security",
+    // CV and cover-photo uploads go through server actions; Vercel itself caps request bodies at ~4.5 MB.
+    serverActions: { bodySizeLimit: "4mb" },
   },
   cacheComponents: true,
   partialPrefetching: true,

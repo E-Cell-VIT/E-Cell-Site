@@ -122,6 +122,36 @@ async function applyToListingImpl(form: FormData): Promise<FormResult> {
     };
   const startups = listing.startups as unknown as { name: string } | null;
   const startup = startups?.name ?? listing.startup_slug;
+
+  // Optional extras: skipped when left empty, rejected when malformed.
+  const phone = f(form, "phone", 30),
+    profileUrl = f(form, "profileUrl", 300),
+    experience = tidy(f(form, "experience", 1500));
+  if (phone && !/^[+\d][\d\s().-]{5,}$/.test(phone))
+    return { ok: false, error: "That phone number doesn't look right. You can also leave it empty." };
+  if (profileUrl && !/^https?:\/\/[^\s]+$/i.test(profileUrl))
+    return { ok: false, error: "Please enter your LinkedIn or portfolio link starting with https://" };
+
+  let cv: string | undefined;
+  const cvEntry = form.get("cv");
+  if (cvEntry instanceof File && cvEntry.size > 0) {
+    if (cvEntry.size > 3 * 1024 * 1024) return { ok: false, error: "Your CV is too large (max 3 MB)." };
+    const bytes = await cvEntry.arrayBuffer();
+    // Check the real file header, not just the type the browser reports.
+    if (new TextDecoder().decode(bytes.slice(0, 5)) !== "%PDF-")
+      return { ok: false, error: "Please upload your CV as a PDF file." };
+    const storageError = photoStorageConfigurationError();
+    if (storageError) return { ok: false, error: storageError };
+    const path = `cv/${makeUid("cv")}.pdf`;
+    try {
+      await writeBinary(path, bytes, "application/pdf");
+      cv = path;
+    } catch (e) {
+      console.error("CV upload failed", e);
+      return { ok: false, error: "Could not save your CV. Please try again, or apply without it." };
+    }
+  }
+
   await saveInboxItem({
     kind: "applications",
     id: makeUid("a"),
@@ -132,6 +162,10 @@ async function applyToListingImpl(form: FormData): Promise<FormResult> {
     name,
     email,
     pitch,
+    ...(phone && { phone }),
+    ...(profileUrl && { profileUrl }),
+    ...(experience && { experience }),
+    ...(cv && { cv }),
     status: "New",
   });
   return { ok: true };

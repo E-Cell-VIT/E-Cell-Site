@@ -52,6 +52,7 @@ export async function readBinary(
   const ext = path.extname(pathname).slice(1);
   return {
     body: buf,
-    contentType: ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg",
+    contentType:
+      ext === "pdf" ? "application/pdf" : ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg",
   };
 }
