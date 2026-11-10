@@ -96,7 +96,7 @@ export function JobsView({ listings }: { listings: Listing[] }) {
                     </span>
                   </div>
                   {l.description && (
-                    <p className="mt-50 line-clamp-50 text-sm whitespace-pre-line text-muted">{l.description}</p>
+                    <p className="mt-30 line-clamp-30 text-sm whitespace-pre-line text-muted">{l.description}</p>
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {l.skills.map((s) => (
