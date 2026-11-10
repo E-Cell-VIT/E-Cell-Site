@@ -63,7 +63,7 @@ export function JobsView({ listings }: { listings: Listing[] }) {
     <>
       {/* inert while the dialog is open: the page behind it can't be tabbed to or read by a screen reader */}
       <div inert={active ? true : undefined}>
-        <PageHeader eyebrow="Jobs board" title="Help" accent="wanted.">
+        <PageHeader eyebrow="Jobs board" title="Opportunities" accent="for you.">
           Startups, clubs and people around campus are looking for students with your skills.
         </PageHeader>
         <section className="mx-auto max-w-6xl px-5 pt-14 pb-28">
