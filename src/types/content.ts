@@ -37,8 +37,13 @@ export type EventItem = {
 
 export type Listing = {
   uid: string;
-  startupSlug: string;
+  /** Who needs help: a startup, a club, a student, anyone. Free text. */
+  organization: string;
+  /** Only set on listings that were posted for a showcased startup (links to its page). */
+  startupSlug?: string;
   role: string;
+  /** What the role involves. Optional, plain text. */
+  description?: string;
   skills: string[];
   commitment: string;
   compensation: "Paid" | "Equity" | "Unpaid";

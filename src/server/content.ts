@@ -107,8 +107,10 @@ const lists: Record<
     table: "listings",
     from: (r: Row) => ({
       uid: r.uid,
-      startupSlug: r.startup_slug,
+      organization: r.organization ?? "",
+      startupSlug: nul(r.startup_slug),
       role: r.role,
+      description: nul(r.description),
       skills: r.skills ?? [],
       commitment: r.commitment,
       compensation: r.compensation,
@@ -117,8 +119,10 @@ const lists: Record<
     }),
     to: (o: Row) => ({
       uid: o.uid,
-      startup_slug: o.startupSlug,
+      organization: o.organization,
+      startup_slug: o.startupSlug || null,
       role: o.role,
+      description: o.description || null,
       skills: o.skills,
       commitment: o.commitment,
       compensation: o.compensation,

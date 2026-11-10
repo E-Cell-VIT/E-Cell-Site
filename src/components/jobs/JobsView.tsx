@@ -14,7 +14,7 @@ import { useFocusTrap } from "@/hooks/use-focus-trap";
 const field =
   "w-full border border-line bg-surface px-4 py-3 text-sm outline-none transition focus:border-gold focus:shadow-[0_0_0_4px_var(--gold-soft)]";
 
-export function JobsView({ listings, names }: { listings: Listing[]; names: Record<string, string> }) {
+export function JobsView({ listings }: { listings: Listing[] }) {
   const [active, setActive] = useState<Listing | null>(null);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -64,7 +64,7 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
       {/* inert while the dialog is open: the page behind it can't be tabbed to or read by a screen reader */}
       <div inert={active ? true : undefined}>
         <PageHeader eyebrow="Jobs board" title="Help" accent="wanted.">
-          Showcased startups are looking for students with your skills.
+          Startups, clubs and people around campus are looking for students with your skills.
         </PageHeader>
         <section className="mx-auto max-w-6xl px-5 pt-14 pb-28">
           {listings.length === 0 && (
@@ -80,17 +80,24 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h3 className="font-display text-3xl">{l.role}</h3>
-                      <Link
-                        href={`/startups/${l.startupSlug}`}
-                        className="text-sm text-muted hover:text-gold"
-                      >
-                        {names[l.startupSlug] ?? l.startupSlug}
-                      </Link>
+                      {l.startupSlug ? (
+                        <Link
+                          href={`/startups/${l.startupSlug}`}
+                          className="text-sm text-muted hover:text-gold"
+                        >
+                          {l.organization}
+                        </Link>
+                      ) : (
+                        <p className="text-sm text-muted">{l.organization}</p>
+                      )}
                     </div>
                     <span className="rounded-full border border-gold/40 px-3 py-1 text-xs text-gold">
                       {l.compensation}
                     </span>
                   </div>
+                  {l.description && (
+                    <p className="mt-4 line-clamp-4 text-sm whitespace-pre-line text-muted">{l.description}</p>
+                  )}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {l.skills.map((s) => (
                       <span key={s} className="bg-surface-hover px-2 py-1 text-xs text-muted">
@@ -110,7 +117,7 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
                         href={l.applicationUrl}
                         external
                         id={`apply-${l.uid}`}
-                        label={`Apply for ${l.role} at ${names[l.startupSlug] ?? l.startupSlug} on the startup's website`}
+                        label={`Apply for ${l.role} at ${l.organization} on their website`}
                         className="!py-2"
                       >
                         Apply on site
@@ -119,7 +126,7 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
                       <Button
                         id={`apply-${l.uid}`}
                         onClick={() => setActive(l)}
-                        label={`Apply for ${l.role} at ${names[l.startupSlug] ?? l.startupSlug}`}
+                        label={`Apply for ${l.role} at ${l.organization}`}
                         className="!py-2"
                       >
                         Apply
@@ -164,11 +171,16 @@ export function JobsView({ listings, names }: { listings: Listing[]; names: Reco
               </div>
               {sent ? (
                 <p className="mt-4 text-muted">
-                  Thanks! The E-Cell team will pass your pitch to{" "}
-                  {names[active.startupSlug] ?? "the founders"}.
+                  Thanks! The E-Cell team will pass your pitch to {active.organization || "the team"}.
                 </p>
               ) : (
                 <form className="mt-5 space-y-3" onSubmit={submit}>
+                  <p className="text-sm text-muted">{active.organization}</p>
+                  {active.description && (
+                    <p className="max-h-40 overflow-y-auto text-sm whitespace-pre-line text-fg/80">
+                      {active.description}
+                    </p>
+                  )}
                   <input type="hidden" name="listingUid" value={active.uid} />
                   <input name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
                   <input required name="name" placeholder="Your name" className={field} />

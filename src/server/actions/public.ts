@@ -109,7 +109,7 @@ async function applyToListingImpl(form: FormData): Promise<FormResult> {
   if (!(await allowSubmission("application"))) return { ok: false, error: RATE_LIMIT_ERROR };
   const { data: listing, error } = await db()
     .from("listings")
-    .select("role,startup_slug,application_method,application_url,startups(name)")
+    .select("role,organization,startup_slug,application_method,application_url,startups(name)")
     .eq("uid", listingUid)
     .maybeSingle();
   if (error) throw new Error(`Could not look up the open role: ${error.message}`);
@@ -118,10 +118,10 @@ async function applyToListingImpl(form: FormData): Promise<FormResult> {
     return {
       ok: false,
       error:
-        "This role takes applications on the startup's own site. Use the “Apply on their site” button on the listing.",
+        "This role takes applications on the poster's own site. Use the “Apply on their site” button on the listing.",
     };
   const startups = listing.startups as unknown as { name: string } | null;
-  const startup = startups?.name ?? listing.startup_slug;
+  const startup = (listing.organization as string) || startups?.name || (listing.startup_slug as string) || "";
 
   // Optional extras: skipped when left empty, rejected when malformed.
   const phone = f(form, "phone", 30),

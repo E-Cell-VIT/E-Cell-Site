@@ -225,23 +225,15 @@ export function StartupsEditor({
 }
 
 // ---------- jobs ----------
-export function JobsEditor({
-  items,
-  revision,
-  startups,
-}: {
-  items: Listing[];
-  revision: number;
-  startups: { slug: string; name: string }[];
-}) {
+export function JobsEditor({ items, revision }: { items: Listing[]; revision: number }) {
   const fields: Field[] = [
     {
-      key: "startupSlug",
-      label: "Which startup is hiring?",
-      type: "select",
+      key: "organization",
+      label: "Who needs help?",
       required: true,
-      options: startups.map((s) => ({ value: s.slug, label: s.name })),
-      hint: "Only startups from the Startups page appear here.",
+      max: 80,
+      placeholder: "e.g. Sam's Bakery, Robotics Club, a student project",
+      hint: "Type any name: a startup, a club, a company or a person. It does not have to be on the Startups page.",
     },
     {
       key: "role",
@@ -249,6 +241,14 @@ export function JobsEditor({
       required: true,
       max: 60,
       placeholder: "e.g. React developer, Graphic designer",
+    },
+    {
+      key: "description",
+      label: "Job description",
+      type: "textarea",
+      max: 1500,
+      placeholder: "What will the person do? What are you looking for?",
+      hint: "Shown on the job card and in the apply form.",
     },
     {
       key: "skills",
@@ -265,7 +265,7 @@ export function JobsEditor({
       required: true,
       options: opts([
         ["Paid", "Paid"],
-        ["Equity", "Equity (a share of the startup)"],
+        ["Equity", "Equity (a share of the business)"],
         ["Unpaid", "Unpaid / volunteer"],
       ]),
     },
@@ -276,7 +276,7 @@ export function JobsEditor({
       required: true,
       options: opts([
         ["internal", "On this website (form on the Jobs page)"],
-        ["external", "On the startup's own site (external link)"],
+        ["external", "On their own site (external link)"],
       ]),
       hint: "External listing applications are handled entirely by the destination you configure below.",
     },
@@ -288,7 +288,6 @@ export function JobsEditor({
       hint: "Required only for external applications. Must start with https:// (or http://). Leave empty for the on-site form.",
     },
   ];
-  const names = Object.fromEntries(startups.map((s) => [s.slug, s.name]));
   return (
     <CollectionEditor<Listing>
       section="listings"
@@ -297,18 +296,19 @@ export function JobsEditor({
       fields={fields}
       noun="job"
       emptyIcon={<BriefcaseBusiness className="h-6 w-6" />}
-      emptyText="Post roles that student startups need help with. Applications arrive in your Inbox."
+      emptyText="Post roles that startups, clubs or anyone else need help with. Applications arrive in your Inbox."
       validate={(l): Record<string, string> =>
         l.applicationMethod === "external" && !l.applicationUrl?.trim()
           ? {
               applicationUrl:
-                "Add the startup's full https:// application link, or switch to the on-site form.",
+                "Add the full https:// application link, or switch to the on-site form.",
             }
           : {}
       }
       blank={() => ({
-        startupSlug: startups[0]?.slug ?? "",
+        organization: "",
         role: "",
+        description: "",
         skills: [],
         commitment: "",
         compensation: "Unpaid",
@@ -317,7 +317,7 @@ export function JobsEditor({
       })}
       summary={(l) => ({
         title: l.role,
-        subtitle: `${names[l.startupSlug] ?? "Unknown startup"} · ${l.commitment || "Flexible"}`,
+        subtitle: `${l.organization || "Unnamed"} · ${l.commitment || "Flexible"}`,
         badge: <Badge>{l.compensation}</Badge>,
         href: "/jobs",
       })}

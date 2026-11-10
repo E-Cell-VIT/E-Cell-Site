@@ -144,10 +144,14 @@ const clean: { [K in Section]: (v: unknown) => Content[K] } = {
       if (o.applicationMethod === "external" && !applicationUrl)
         throw new Error("External roles need a full http(s) application URL.");
       const applicationMethod = o.applicationMethod === "external" ? "external" : "internal";
+      const organization = str(o.organization, 80);
+      if (!organization) throw new Error("Each job needs a name for who is asking for help.");
       return {
         uid: str(o.uid, 40) || makeUid("jb"),
-        startupSlug: str(o.startupSlug, 80),
+        organization,
+        startupSlug: str(o.startupSlug, 80) || undefined,
         role: str(o.role, 80),
+        description: str(o.description, 1500) || undefined,
         skills: (Array.isArray(o.skills) ? o.skills : [])
           .map((s) => str(s, 30))
           .filter(Boolean)
