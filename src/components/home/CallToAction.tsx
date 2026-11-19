@@ -7,7 +7,7 @@ export function CallToAction({ heading }: { heading: string }) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-gold via-[#b8964a] to-moss">
       <Crest className="pointer-events-none absolute -right-16 top-1/2 h-[140%] w-auto -translate-y-1/2 opacity-[0.12] mix-blend-multiply" />
-      <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-10 px-5 py-24 md:flex-row md:items-end lg:px-8 lg:py-32">
+      <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-10 px-5 py-24 lg:px-8 lg:py-32">
         <Reveal>
           <p className="font-grotesk text-xs font-bold uppercase tracking-[0.3em] text-ink/70">
             Dedicate your heart
