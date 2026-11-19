@@ -22,7 +22,7 @@ export function AboutCell({ lead, body, stats }: { lead: string; body: string; s
           {/* the official poster, presented like a framed banner */}
           <div className="relative rotate-[2deg] border border-ink/15 bg-ink p-3 shadow-[0_40px_80px_-20px_rgba(11,14,17,.55)] transition-transform duration-700 hover:rotate-0">
             <Image
-              src="/brand/poster.jpg"
+              src="/brand/poster-final.jpg"
               alt="E-Cell, the Scouts of VIT poster"
               width={512}
               height={768}

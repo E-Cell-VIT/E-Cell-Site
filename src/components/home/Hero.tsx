@@ -114,7 +114,7 @@ export function Hero({ tagline }: { tagline: string }) {
           </div>
           <div className="entrance-seam" aria-hidden />
           <div className="entrance-plaque" aria-hidden>
-            <Image src="/brand/poster.jpg" alt="" width={512} height={768} priority />
+            <Image src="/brand/poster-final.jpg" alt="" width={512} height={768} priority />
           </div>
 
           <div className="entrance-mainline">
