@@ -73,7 +73,7 @@ export function Intro() {
             {[-1, 1].map((dir) => (
               <motion.div
                 key={dir}
-                className={`absolute inset-y-0 w-1/2 bg-[#070806] ${dir < 0 ? "left-0 border-r" : "right-0 border-l"} border-gold/40`}
+                className={`absolute inset-y-0 w-1/2 bg-[#070806] ${dir < 0 ? "left-0" : "right-0"}`}
                 animate={phase === "gates" ? { x: `${dir * 100}%` } : { x: 0 }}
                 transition={{ duration: 1.1, ease, delay: 0.15 }}
               >
