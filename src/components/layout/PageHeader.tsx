@@ -24,7 +24,7 @@ export function PageHeader({
         className="absolute -left-20 -top-32 h-96 w-[36rem] rounded-full bg-moss/30 blur-[120px]"
       />
       <Crest className="pointer-events-none absolute -right-10 top-10 hidden h-[130%] w-auto opacity-[0.07] md:block" />
-      <div className="relative mx-auto grid max-w-7xl gap-8 px-5 pb-16 pt-36 md:pb-20 md:pt-44 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:px-8">
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-8 px-5 pb-16 pt-36 md:pb-20 md:pt-44 lg:px-8">
         <Reveal>
           <Eyebrow>{eyebrow}</Eyebrow>
           <h1 className="font-display text-[clamp(3.8rem,9vw,8.5rem)] text-ivory">
@@ -39,7 +39,9 @@ export function PageHeader({
         </Reveal>
         {children && (
           <Reveal i={1}>
-            <p className="max-w-md text-base leading-7 text-muted">{children}</p>
+            <p className="max-w-xl text-pretty text-base leading-7 text-muted md:text-lg md:leading-8">
+              {children}
+            </p>
           </Reveal>
         )}
       </div>

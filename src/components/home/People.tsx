@@ -7,7 +7,7 @@ export function People({ faculty }: { faculty: Person[]; team?: Person[] }) {
   return (
     <section id="people" className="relative py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-5 lg:px-8">
-        <div className="grid gap-14 lg:grid-cols-[0.75fr_1.25fr]">
+        <div className="grid grid-cols-1 gap-14 lg:grid-cols-[0.75fr_1.25fr]">
           <Reveal>
             <Eyebrow>Guided by experience</Eyebrow>
             <h2 className="font-display text-[clamp(3.2rem,6vw,6rem)] text-ivory">
@@ -18,7 +18,7 @@ export function People({ faculty }: { faculty: Person[]; team?: Person[] }) {
               wider network.
             </p>
           </Reveal>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {faculty.map((f, i) => (
               <Reveal key={f.uid} i={i}>
                 <article className="group border border-line bg-surface p-4 transition duration-500 hover:border-gold/50">

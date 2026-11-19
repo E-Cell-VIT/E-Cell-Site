@@ -35,7 +35,7 @@ export function EventsView({ events }: { events: EventItem[] }) {
               </button>
             ))}
           </div>
-          <motion.div layout className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <motion.div layout className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {list.map((e, i) => (
                 <motion.div

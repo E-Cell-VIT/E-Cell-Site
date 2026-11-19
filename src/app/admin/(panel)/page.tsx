@@ -67,7 +67,7 @@ async function Dashboard() {
     <div className="space-y-10">
       <section>
         <h2 className="mb-4 font-grotesk text-lg font-bold">Waiting for you</h2>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <Tile
             href="/admin/inbox?tab=messages"
             icon={<MessageSquare className="h-6 w-6" />}
@@ -101,7 +101,7 @@ async function Dashboard() {
 
       <section>
         <h2 className="mb-4 font-grotesk text-lg font-bold">Quick actions</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {[
             ["/admin/events?new=1", <CalendarPlus key="i" className="h-5 w-5" />, "Add an event"],
             ["/admin/startups?new=1", <Rocket key="i" className="h-5 w-5" />, "Add a startup"],
@@ -119,7 +119,7 @@ async function Dashboard() {
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <h2 className="font-grotesk text-lg font-bold">Your website right now</h2>
           <ul className="mt-4 divide-y divide-black/5 text-[15px]">

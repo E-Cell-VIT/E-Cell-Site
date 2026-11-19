@@ -13,7 +13,7 @@ export function AboutCell({ lead, body, stats }: { lead: string; body: string; s
           <h2 className="font-display text-[clamp(3.5rem,8vw,7.5rem)] text-ink">
             Where builders find their <span className="text-outline-ink">beginning.</span>
           </h2>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
             <p className="text-lg leading-8 text-ink/80">{lead}</p>
             <p className="leading-7 text-ink/60">{body}</p>
           </div>

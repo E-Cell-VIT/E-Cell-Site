@@ -28,7 +28,7 @@ export default async function Blog() {
             No posts yet. Check back soon.
           </p>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {sorted.map((p, i) => (
               <Reveal key={p.uid} i={i % 3} className="h-full">
                 <Link

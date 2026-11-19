@@ -70,7 +70,7 @@ async function StartupDetail({ params }: { params: Params }) {
           Founded by <span className="text-fg">{s.founder}</span>
         </p>
       </Reveal>
-      <div className="mt-14 grid gap-5 md:grid-cols-2">
+      <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2">
         {[
           ["Problem", s.problem],
           ["Solution", s.solution],

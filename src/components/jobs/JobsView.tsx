@@ -70,7 +70,7 @@ export function JobsView({ listings }: { listings: Listing[] }) {
           {listings.length === 0 && (
             <p className="py-16 text-center text-muted">No open roles right now. Check back soon.</p>
           )}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {listings.map((l, i) => (
               <Reveal key={l.uid} i={i}>
                 <motion.div

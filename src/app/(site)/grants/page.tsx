@@ -19,7 +19,7 @@ export default async function Grants() {
             We&rsquo;re compiling the list. Check back soon.
           </p>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {grants.map((g, i) => {
               const facts: [LucideIcon, string, string][] = [
                 [Wallet, "Funding", g.amount],

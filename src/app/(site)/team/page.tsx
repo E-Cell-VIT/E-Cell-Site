@@ -8,12 +8,14 @@ import type { Person } from "@/types/content";
 
 export const metadata = { title: "Our team · E-Cell VIT" };
 
-function Avatar({ p, className }: { p: Person; className: string }) {
+// textCls only styles the initial shown when there is no photo, so a photo that fails to load never
+// renders its alt text at that huge size.
+function Avatar({ p, className, textCls }: { p: Person; className: string; textCls: string }) {
   return p.photo ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={p.photo} alt={p.name} className={`${className} object-cover`} />
+    <img src={p.photo} alt={p.name} className={`${className} object-cover text-sm text-muted`} />
   ) : (
-    <span className={`${className} grid place-items-center bg-elev font-display text-ivory/30`}>
+    <span className={`${className} ${textCls} grid place-items-center bg-elev font-display text-ivory/30`}>
       {p.name.slice(0, 1)}
     </span>
   );
@@ -36,14 +38,15 @@ export default async function Team() {
           <div>
             <Eyebrow>Guided by experience</Eyebrow>
             <h2 className="font-display text-5xl text-ivory">Faculty advisors</h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {faculty.map((f, i) => (
                 <Reveal key={f.uid} i={i % 4}>
                   <article className="group border border-line bg-surface p-4 transition duration-500 hover:border-gold/50">
                     <div className="aspect-[4/5] overflow-hidden">
                       <Avatar
                         p={f}
-                        className="h-full w-full text-8xl transition duration-700 group-hover:scale-105"
+                        className="h-full w-full transition duration-700 group-hover:scale-105"
+                        textCls="text-8xl"
                       />
                     </div>
                     <h3 className="mt-5 font-grotesk text-lg font-bold text-ivory">{f.name}</h3>
@@ -65,13 +68,13 @@ export default async function Team() {
           >
             <Eyebrow>Student team</Eyebrow>
             <h2 className="font-display text-5xl text-ivory">{domain}</h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {team
                 .filter((m) => (m.domain || "Core team") === domain)
                 .map((m, i) => (
                   <Reveal key={m.uid} i={i % 4}>
                     <article className="group relative h-full border border-line bg-surface p-6 transition duration-500 hover:border-gold/50">
-                      <Avatar p={m} className="h-20 w-20 rounded-full text-4xl ring-1 ring-gold/40" />
+                      <Avatar p={m} className="h-20 w-20 rounded-full ring-1 ring-gold/40" textCls="text-4xl" />
                       <h3 className="mt-6 font-grotesk text-lg font-bold text-ivory">{m.name}</h3>
                       <p className="mt-1 font-grotesk text-[11px] font-bold uppercase tracking-widest text-gold">
                         {m.role}

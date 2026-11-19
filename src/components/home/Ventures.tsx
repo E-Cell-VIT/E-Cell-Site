@@ -19,7 +19,7 @@ export function Ventures({ startups }: { startups: Startup[] }) {
             Hover or tap a card to discover the idea behind it.
           </p>
         </Reveal>
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {startups.slice(0, 3).map((s, i) => (
             <Reveal key={s.slug} i={i}>
               <StartupCard s={s} i={i} />

@@ -244,7 +244,7 @@ export function SiteEditor({
               <p className="mt-1 text-sm text-black/55">
                 Shown under the About section. They count up when visitors scroll to them.
               </p>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {stats.map((s, i) => (
                   <div key={s.uid} className="flex gap-3 rounded-xl bg-[#f7f5ef] p-3">
                     <label className="w-24 shrink-0 text-sm font-semibold">

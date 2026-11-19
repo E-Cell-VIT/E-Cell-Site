@@ -47,7 +47,7 @@ export default function About() {
     <>
       <PageHeader eyebrow="About us" title="Where campus ideas" accent="become ventures." />
       <section className="mx-auto max-w-6xl px-5 pb-24 pt-14">
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {story.map(({ title, body }, i) => (
             <Reveal key={title} i={i}>
               <div className="h-full border border-line bg-surface p-6">
@@ -80,7 +80,7 @@ export default function About() {
       </section>
       <PageHeader eyebrow="How it works" title="Three pieces," accent="one launchpad." />
       <section className="mx-auto max-w-6xl px-5 pt-14 pb-28">
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {pieces.map(({ icon: Icon, title, body }, i) => (
             <Reveal key={title} i={i}>
               <div className="h-full rounded-none border border-line bg-surface p-6">

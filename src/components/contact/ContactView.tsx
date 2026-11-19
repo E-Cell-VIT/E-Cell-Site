@@ -102,7 +102,7 @@ export function ContactView({ email, address }: { email: string; address: string
               ) : (
                 <motion.form key="form" exit={{ opacity: 0 }} onSubmit={submit} className="grid gap-6">
                   <input name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
-                  <div className="grid gap-6 md:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <label className={label}>
                       Your name
                       <input required name="name" className={field} placeholder="Full name" />

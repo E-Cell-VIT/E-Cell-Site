@@ -96,7 +96,7 @@ export function SubmitBlogForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-5 border border-line bg-surface p-6 sm:p-8">
       <input name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className="block text-sm font-semibold text-fg">
           Your name
           <input required name="author" maxLength={80} autoComplete="name" className={`${field} mt-2`} />
