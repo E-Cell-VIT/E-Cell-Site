@@ -1,13 +1,13 @@
 import Image from "next/image";
 
-// Crest cropped from the official E-Cell poster (public/brand/poster.jpg). Don't recolor or stretch it.
+// Emblem cut from the final E-Cell logo (transparent background). Don't recolor or stretch it.
 export function Crest({ className = "", priority = false }: { className?: string; priority?: boolean }) {
   return (
     <Image
       src="/brand/crest.webp"
       alt=""
-      width={500}
-      height={560}
+      width={490}
+      height={593}
       priority={priority}
       className={className}
     />

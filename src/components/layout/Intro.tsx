@@ -8,11 +8,13 @@ const ease = [0.76, 0, 0.24, 1] as const;
 type P = { x: number; y: number; tx: number; ty: number; c: string; d: number; s: number };
 
 /**
- * First-visit intro: gold dust assembles into the crest, the wordmark resolves,
+ * First-visit intro: gold dust assembles into the E-Cell logo, the crisp logo resolves over it,
  * then the two "gates" split open onto the site. Click or press any key to skip.
  */
 export function Intro() {
   const [phase, setPhase] = useState<"dust" | "gates" | "done">("dust");
+  // Where the logo sits on screen, so the crisp image lines up exactly with the dust.
+  const [box, setBox] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const stop = useRef<() => void>(() => {});
 
@@ -42,11 +44,12 @@ export function Intro() {
     const t0 = performance.now();
 
     const img = new Image();
-    img.src = "/brand/crest.webp";
+    img.src = "/brand/logo.webp";
     img.onload = () => {
       if (stopped) return;
-      const h = Math.min(H * 0.42, 340),
-        w = h * (img.width / img.height);
+      const ratio = img.width / img.height;
+      const h = Math.min(H * 0.64, 520, (W * 0.86) / ratio),
+        w = h * ratio;
       const off = document.createElement("canvas");
       off.width = Math.round(w);
       off.height = Math.round(h);
@@ -55,7 +58,8 @@ export function Intro() {
       const data = o.getImageData(0, 0, off.width, off.height).data;
       const step = W < 640 ? 3 : 2.5,
         ox = W / 2 - w / 2,
-        oy = H / 2 - h / 2 - 50;
+        oy = H / 2 - h / 2 - 12;
+      setBox({ left: ox, top: oy, width: w, height: h });
       for (let y = 0; y < off.height; y += step)
         for (let x = 0; x < off.width; x += step) {
           const i = (Math.floor(y) * off.width + Math.floor(x)) * 4;
@@ -137,26 +141,20 @@ export function Intro() {
               transition={{ duration: 0.4 }}
             >
               <canvas ref={canvas} className="absolute inset-0 h-full w-full" />
-              <div className="absolute inset-x-0 bottom-[16%] text-center sm:bottom-[20%]">
-                <motion.p
-                  initial={{ opacity: 0, letterSpacing: "1.2em" }}
-                  animate={{ opacity: 1, letterSpacing: "0.32em" }}
-                  transition={{ delay: 1.4, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                  className="font-serif text-4xl font-semibold text-ivory sm:text-6xl"
-                >
-                  E-CELL
-                </motion.p>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 2, duration: 0.6 }}
-                  className="mt-4 flex items-center justify-center gap-4 font-grotesk text-[10px] font-bold tracking-[0.4em] text-gold sm:text-xs"
-                >
-                  <span className="h-px w-12 bg-gold" />
-                  THE SCOUTS OF VIT
-                  <span className="h-px w-12 bg-gold" />
-                </motion.div>
-              </div>
+              {box && (
+                <motion.img
+                  src="/brand/logo.webp"
+                  alt=""
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1.7, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute"
+                  style={{
+                    ...box,
+                    filter: "drop-shadow(0 0 28px rgba(234, 217, 166, 0.22))",
+                  }}
+                />
+              )}
               <motion.div className="absolute bottom-8 left-1/2 h-px w-40 -translate-x-1/2 bg-line">
                 <motion.div
                   className="h-full origin-left bg-gold"
