@@ -1,7 +1,17 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { BriefcaseBusiness, ChevronDown, Lightbulb, Mail, MessageSquare, Rocket, Trash2 } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  ChevronDown,
+  FilePlus2,
+  FileSpreadsheet,
+  Lightbulb,
+  Mail,
+  MessageSquare,
+  Rocket,
+  Trash2,
+} from "lucide-react";
 import { approveIdea, removeInbox, updateInbox } from "@/server/actions/admin";
 import type { Application, Idea, InboxItem, InboxKind, Message } from "@/types/content";
 import { Badge, Btn, Card, Empty, inputCls, timeAgo, useConfirm, useToast } from "./ui";
@@ -48,8 +58,47 @@ export function InboxView({
   const [tab, setTab] = useState<InboxKind>(startTab);
   const [showAll, setShowAll] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [sheetBusy, setSheetBusy] = useState(false);
   const toast = useToast();
   const confirm = useConfirm();
+
+  // Downloads the interview sheet. With a file, the new candidates are added to that sheet and what you typed is kept.
+  async function interviewSheet(file?: File) {
+    setSheetBusy(true);
+    try {
+      let res: Response;
+      if (file) {
+        const form = new FormData();
+        form.append("file", file);
+        res = await fetch("/admin/interview-sheet", { method: "POST", body: form });
+      } else {
+        res = await fetch("/admin/interview-sheet");
+      }
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(body?.error ?? "Could not create the sheet. Please try again.");
+      }
+      const blob = await res.blob();
+      const added = Number(res.headers.get("X-Sheet-Added") ?? 0);
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `E-Cell-Interview-Schedule-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 5000);
+      toast({
+        tone: "success",
+        text: !file
+          ? "Interview sheet downloaded."
+          : added === 0
+            ? "No new candidates, your sheet is up to date. A fresh copy was downloaded."
+            : `${added} new candidate${added === 1 ? "" : "s"} added. Updated sheet downloaded.`,
+      });
+    } catch (e) {
+      toast({ tone: "error", text: e instanceof Error ? e.message : "Could not create the sheet." });
+    } finally {
+      setSheetBusy(false);
+    }
+  }
 
   const list = (data[tab] as InboxItem[]).filter((x) => showAll || isOpen(x.status));
   const patchLocal = (kind: InboxKind, id: string, patch: Partial<InboxItem>) =>
@@ -143,6 +192,43 @@ export function InboxView({
           );
         })}
       </div>
+      {tab === "applications" && (
+        <Card className="mt-5">
+          <h2 className="font-grotesk text-lg font-bold text-[#1d1d1b]">Interview sheet (Excel)</h2>
+          <p className="mt-1 max-w-2xl text-[15px] leading-relaxed text-[#1d1d1b]/65">
+            A sheet of everyone who applied, with the details you need to schedule meetings. The first time, download a
+            new sheet. After that, use the second button: pick your sheet and the new candidates are added to it, with
+            everything you already typed kept.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Btn
+              variant="primary"
+              busy={sheetBusy}
+              icon={<FileSpreadsheet className="h-4 w-4" />}
+              onClick={() => interviewSheet()}
+            >
+              Download new sheet
+            </Btn>
+            <label
+              className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 text-[15px] font-semibold text-[#1d1d1b] ring-1 ring-black/15 transition hover:ring-black/30 focus-within:ring-2 focus-within:ring-[#c7a54f] ${sheetBusy ? "pointer-events-none opacity-50" : "cursor-pointer"}`}
+            >
+              <FilePlus2 className="h-4 w-4" />
+              Add new candidates to my sheet
+              <input
+                type="file"
+                accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                className="sr-only"
+                disabled={sheetBusy}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (file) void interviewSheet(file);
+                }}
+              />
+            </label>
+          </div>
+        </Card>
+      )}
       <label className="mt-5 flex w-fit cursor-pointer items-center gap-2.5 text-[15px] text-black/70">
         <input
           type="checkbox"
